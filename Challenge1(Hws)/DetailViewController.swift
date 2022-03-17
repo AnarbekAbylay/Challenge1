@@ -8,13 +8,42 @@
 import UIKit
 
 class DetailViewController: UIViewController {
-
+    @IBOutlet var imageView: UIImageView!
+    var selectedImage:String?
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        view.backgroundColor = .gray
+        title = "\(selectedImage!.uppercased().replacingOccurrences(of: "@3X.PNG", with: ""))"
+        
+        if let imageName = selectedImage {
+            var image = UIImage(named:imageName)
+            imageView.image = image
+        }
+        changeAppearance()
+        
+        
+        
         // Do any additional setup after loading the view.
     }
     
+    func changeAppearance() {
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(shareTapped))
+        
+    }
+    
+    @objc func shareTapped() {
+        guard let image = imageView.image?.jpegData(compressionQuality: 0.8) else {
+            print("No image found")
+            return
+        }
+        
+        let vc = UIActivityViewController(activityItems: [image,selectedImage!.uppercased()], applicationActivities: [])
+        vc.popoverPresentationController?.barButtonItem = navigationController?.navigationItem.rightBarButtonItem
+        present(vc,animated:true)
+    }
 
     /*
     // MARK: - Navigation
